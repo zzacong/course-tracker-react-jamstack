@@ -19,7 +19,7 @@ export default function CourseForm({ courseAdded }) {
     e.preventDefault()
     // * Create the course
     try {
-      await axios.post('/api/courses', {
+      await axios.post('/.netlify/functions/courses', {
         name,
         link,
         tags,

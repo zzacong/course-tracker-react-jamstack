@@ -10,7 +10,7 @@ function App() {
   const loadCourses = async () => {
     // * load the courses
     try {
-      const { data: courses } = await axios.get('/api/courses')
+      const { data: courses } = await axios.get('/.netlify/functions/courses')
       setCourses(courses)
     } catch (error) {
       console.error(error)
