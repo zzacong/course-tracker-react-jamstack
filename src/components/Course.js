@@ -5,7 +5,7 @@ export default function Course({ course, refreshCourses }) {
   const markCoursePurchased = async () => {
     // * mark course as purchased
     try {
-      await axios.put('/.netlify/functions/courses', {
+      await axios.put('/api/courses', {
         ...course,
         purchased: true,
       })
@@ -18,7 +18,7 @@ export default function Course({ course, refreshCourses }) {
   const markCourseUnpurchased = async () => {
     // * mark course as unpurchased
     try {
-      await axios.put('/.netlify/functions/courses', {
+      await axios.put('/api/courses', {
         ...course,
         purchased: false,
       })
@@ -32,7 +32,7 @@ export default function Course({ course, refreshCourses }) {
     // * delete course
     try {
       console.log('id ', course.id)
-      await axios.delete('/.netlify/functions/courses', {
+      await axios.delete('/api/courses', {
         data: { id: course.id },
       })
       refreshCourses()
