@@ -43,7 +43,7 @@ export default function Course({ course, refreshCourses }) {
 
   return (
     <div className="list-group-item">
-      <a href={course.link}>
+      <a href={course.link} target="_blank" rel="noopener noreferrer">
         <h4 className="list-group-item-heading">{course.name}</h4>
       </a>
       <p>
