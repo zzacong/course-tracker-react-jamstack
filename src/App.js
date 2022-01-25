@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import CourseList from './components/CourseList'
@@ -22,7 +22,7 @@ function App() {
   }, [])
 
   return (
-    <div className="container mt-5">
+    <div className="container my-5">
       <h1 className="mb-5 text-center">Course Tracker</h1>
       <CourseForm courseAdded={loadCourses} />
       <CourseList courses={courses} refreshCourses={loadCourses} />

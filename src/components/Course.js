@@ -1,12 +1,10 @@
-import React from 'react'
 import axios from 'axios'
 
 export default function Course({ course, refreshCourses }) {
   const markCoursePurchased = async () => {
     // * mark course as purchased
     try {
-      await axios.put('/api/courses', {
-        ...course,
+      await axios.put(`/api/courses/${course.id}`, {
         purchased: true,
       })
       refreshCourses()
@@ -18,8 +16,7 @@ export default function Course({ course, refreshCourses }) {
   const markCourseUnpurchased = async () => {
     // * mark course as unpurchased
     try {
-      await axios.put('/api/courses', {
-        ...course,
+      await axios.put(`/api/courses/${course.id}`, {
         purchased: false,
       })
       refreshCourses()
@@ -31,10 +28,7 @@ export default function Course({ course, refreshCourses }) {
   const deleteCourse = async () => {
     // * delete course
     try {
-      console.log('id ', course.id)
-      await axios.delete('/api/courses', {
-        data: { id: course.id },
-      })
+      await axios.delete(`/api/courses/${course.id}`)
       refreshCourses()
     } catch (error) {
       console.error(error)
