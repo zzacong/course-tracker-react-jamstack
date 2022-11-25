@@ -1,5 +1,5 @@
-import getCourses from '../../lib/helpers/getCourses'
-import createCourse from '../../lib/helpers/createCourse'
+import getCourses from '../../lib/helpers/getCourses.mjs'
+import createCourse from '../../lib/helpers/createCourse.mjs'
 
 export default async function handler(req, res) {
   // * call appropriate helper function based on HTTP method

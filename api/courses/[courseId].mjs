@@ -1,5 +1,5 @@
-import deleteCourse from '../../lib/helpers/deleteCourse'
-import updateCourse from '../../lib/helpers/updateCourse'
+import deleteCourse from '../../lib/helpers/deleteCourse.mjs'
+import updateCourse from '../../lib/helpers/updateCourse.mjs'
 
 export default async function handler(req, res) {
   // * call appropriate helper function based on HTTP method
