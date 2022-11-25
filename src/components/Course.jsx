@@ -1,39 +1,44 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
-export default function Course({ course, refreshCourses }) {
-  const markCoursePurchased = async () => {
-    // * mark course as purchased
-    try {
-      await axios.put(`/api/courses/${course.id}`, {
-        purchased: true,
-      })
-      refreshCourses()
-    } catch (error) {
-      console.error(error)
-    }
-  }
+import { queryKey } from '../App'
 
-  const markCourseUnpurchased = async () => {
-    // * mark course as unpurchased
-    try {
-      await axios.put(`/api/courses/${course.id}`, {
-        purchased: false,
-      })
-      refreshCourses()
-    } catch (error) {
-      console.error(error)
-    }
+const markCoursePurchased = async ({ courseId, purchased }) => {
+  // * mark course as purchased
+  try {
+    await axios.put(`/api/courses/${courseId}`, {
+      purchased,
+    })
+  } catch (error) {
+    console.error(error)
   }
+}
 
-  const deleteCourse = async () => {
-    // * delete course
-    try {
-      await axios.delete(`/api/courses/${course.id}`)
-      refreshCourses()
-    } catch (error) {
-      console.error(error)
-    }
+const deleteCourse = async courseId => {
+  // * delete course
+  try {
+    await axios.delete(`/api/courses/${courseId}`)
+  } catch (error) {
+    console.error(error)
   }
+}
+
+export default function Course({ course }) {
+  const queryClient = useQueryClient()
+
+  const markCoursePurchasedMutation = useMutation({
+    mutationFn: markCoursePurchased,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey })
+    },
+  })
+
+  const deleteCourseMutation = useMutation({
+    mutationFn: deleteCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey })
+    },
+  })
 
   return (
     <div className="list-group-item">
@@ -52,19 +57,44 @@ export default function Course({ course, refreshCourses }) {
       {!course.purchased ? (
         <button
           className="btn btn-sm btn-primary"
-          onClick={markCoursePurchased}
+          disabled={
+            markCoursePurchasedMutation.isLoading ||
+            deleteCourseMutation.isLoading
+          }
+          onClick={() =>
+            markCoursePurchasedMutation.mutate({
+              courseId: course.id,
+              purchased: true,
+            })
+          }
         >
           Purchased
         </button>
       ) : (
         <button
           className="btn btn-sm btn-secondary"
-          onClick={markCourseUnpurchased}
+          disabled={
+            markCoursePurchasedMutation.isLoading ||
+            deleteCourseMutation.isLoading
+          }
+          onClick={() =>
+            markCoursePurchasedMutation.mutate({
+              courseId: course.id,
+              purchased: false,
+            })
+          }
         >
           Move to Backlog
         </button>
       )}
-      <button className="btn btn-sm btn-danger ml-2" onClick={deleteCourse}>
+      <button
+        className="btn btn-sm btn-danger ml-2"
+        disabled={
+          deleteCourseMutation.isLoading ||
+          markCoursePurchasedMutation.isLoading
+        }
+        onClick={() => deleteCourseMutation.mutate(course.id)}
+      >
         Delete
       </button>
     </div>

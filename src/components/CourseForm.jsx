@@ -1,41 +1,57 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
+import { queryKey } from '../App'
 import Tags from './Tags'
 
-export default function CourseForm({ courseAdded }) {
+const addCourse = async ({ name, link, tags }) => {
+  try {
+    await axios.post('/api/courses', {
+      name,
+      link,
+      tags,
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export default function CourseForm() {
   const [name, setName] = useState('')
   const [link, setLink] = useState('')
   const [tags, setTags] = useState([])
   const [count, setCount] = useState(0)
 
+  const formRef = useRef(null)
+
+  const queryClient = useQueryClient()
+  const addCourseMutation = useMutation({
+    mutationFn: addCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey })
+    },
+  })
+
   const resetForm = () => {
     setName('')
     setLink('')
-    setCount(count + 1)
+    setCount(p => p + 1)
   }
 
-  const submitCourse = async e => {
+  const submitCourse = e => {
     e.preventDefault()
     // * Create the course
-    try {
-      await axios.post('/api/courses', {
-        name,
-        link,
-        tags,
-      })
-      resetForm()
-      courseAdded()
-    } catch (error) {
-      console.error(error)
-    }
+    addCourseMutation.mutate({ name, link, tags })
+    formRef.current.reset()
+    resetForm()
   }
 
   return (
     <div className="card">
       <div className="card-header">Add a New Course</div>
       <div className="card-body">
-        <form className="" onSubmit={submitCourse}>
+        <form ref={formRef} className="" onSubmit={submitCourse}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
             <input
@@ -60,7 +76,11 @@ export default function CourseForm({ courseAdded }) {
             <p>Tags</p>
             <Tags tagsUpdated={setTags} keys={count} />
           </div>
-          <button type="submit" className="btn btn-primary">
+          <button
+            type="submit"
+            disabled={addCourseMutation.isLoading}
+            className="btn btn-primary"
+          >
             Submit
           </button>
         </form>

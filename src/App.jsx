@@ -1,31 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
 import CourseList from './components/CourseList'
 import CourseForm from './components/CourseForm'
 
+const loadCourses = async () => {
+  // * load the courses
+  const { data: courses } = await axios.get('/api/courses')
+  return courses
+}
+
+export const queryKey = ['get-courses']
+
 function App() {
-  const [courses, setCourses] = useState([])
-
-  const loadCourses = async () => {
-    // * load the courses
-    try {
-      const { data: courses } = await axios.get('/api/courses')
-      setCourses(courses)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
-    loadCourses()
-  }, [])
+  const { data: courses } = useQuery({
+    queryKey,
+    queryFn: loadCourses,
+    initialData: [],
+  })
 
   return (
     <div className="container my-5">
       <h1 className="mb-5 text-center">Course Tracker</h1>
-      <CourseForm courseAdded={loadCourses} />
-      <CourseList courses={courses} refreshCourses={loadCourses} />
+      <CourseForm />
+      <CourseList courses={courses} />
     </div>
   )
 }

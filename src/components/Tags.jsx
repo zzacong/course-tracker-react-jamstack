@@ -4,19 +4,20 @@ export default function Tags({ tagsUpdated, keys }) {
   const tagChoices = ['node', 'javascript', 'react', 'jamstack']
   const [selectedTags, setSelectedTags] = useState([])
 
-  useEffect(() => {
-    setSelectedTags([])
-  }, [keys])
-
   const tagChange = e => {
     const value = e.target.value
     const alreadySelected = selectedTags.includes(value)
     if (e.target.checked && !alreadySelected) {
-      setSelectedTags([...selectedTags, value])
+      setSelectedTags(p => [...p, value])
     } else if (!e.target.checked && alreadySelected) {
-      setSelectedTags(selectedTags.filter(prevTag => prevTag !== value))
+      setSelectedTags(p => p.filter(prevTag => prevTag !== value))
     }
   }
+
+  // reset selected tags onsubmit
+  useEffect(() => {
+    setSelectedTags([])
+  }, [keys])
 
   useEffect(() => {
     tagsUpdated(selectedTags)

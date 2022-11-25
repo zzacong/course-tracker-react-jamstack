@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.16.1",
     "airtable": "^0.11.1",
     "axios": "^0.25.0",
     "bootstrap": "^4.6.1",
