@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 
 import Tags from './Tags'
@@ -58,7 +58,7 @@ export default function CourseForm({ courseAdded }) {
           </div>
           <div className="form-group">
             <p>Tags</p>
-            <Tags tagsUpdated={setTags} key={count} />
+            <Tags tagsUpdated={setTags} count={count} />
           </div>
           <button type="submit" className="btn btn-primary">
             Submit
