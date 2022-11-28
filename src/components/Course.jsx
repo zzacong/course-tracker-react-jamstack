@@ -29,14 +29,14 @@ export default function Course({ course }) {
   const markCoursePurchasedMutation = useMutation({
     mutationFn: markCoursePurchased,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey: [queryKey] })
     },
   })
 
   const deleteCourseMutation = useMutation({
     mutationFn: deleteCourse,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey: [queryKey] })
     },
   })
 

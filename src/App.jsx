@@ -10,13 +10,14 @@ const loadCourses = async () => {
   return courses
 }
 
-export const queryKey = ['get-courses']
+export const queryKey = 'get-courses'
 
 function App() {
   const { data: courses } = useQuery({
-    queryKey,
+    queryKey: [queryKey],
     queryFn: loadCourses,
     initialData: [],
+    // refetchOnWindowFocus: false,
   })
 
   return (

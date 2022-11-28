@@ -1,20 +1,25 @@
+import type { Handler } from '@netlify/functions'
+
 import formattedReturn from './utils/formattedReturn'
 import getCourses from './routes/getCourses'
 import createCourse from './routes/createCourse'
 import deleteCourse from './routes/deleteCourse'
 import updateCourse from './routes/updateCourse'
 
-export async function handler(event) {
+export const handler: Handler = async (event, context) => {
+  const path = event.path.replace(/api\/[^/]+/, '')
+  const segments = path.split('/').filter(e => e)
+
   // * call appropriate helper function based on HTTP method
   switch (event.httpMethod) {
     case 'GET':
-      return await getCourses(event)
+      return getCourses(event, context)
     case 'POST':
-      return await createCourse(event)
+      return createCourse(event, context)
     case 'PUT':
-      return await updateCourse(event)
+      return updateCourse(event, context, segments[0]!)
     case 'DELETE':
-      return await deleteCourse(event)
+      return deleteCourse(event, context, segments[0]!)
     default:
       return formattedReturn(405, { msg: 'Method is not supported' })
   }

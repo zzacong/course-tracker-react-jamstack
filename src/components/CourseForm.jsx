@@ -29,7 +29,7 @@ export default function CourseForm() {
   const addCourseMutation = useMutation({
     mutationFn: addCourse,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey: [queryKey] })
     },
   })
 
