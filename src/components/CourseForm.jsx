@@ -74,7 +74,7 @@ export default function CourseForm() {
           </div>
           <div className="form-group">
             <p>Tags</p>
-            <Tags tagsUpdated={setTags} keys={count} />
+            <Tags tagsUpdated={setTags} count={count} />
           </div>
           <button
             type="submit"

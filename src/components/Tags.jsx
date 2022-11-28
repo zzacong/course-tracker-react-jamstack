@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function Tags({ tagsUpdated, keys }) {
+export default function Tags({ tagsUpdated, count }) {
   const tagChoices = ['node', 'javascript', 'react', 'jamstack']
   const [selectedTags, setSelectedTags] = useState([])
 
@@ -17,7 +17,7 @@ export default function Tags({ tagsUpdated, keys }) {
   // reset selected tags onsubmit
   useEffect(() => {
     setSelectedTags([])
-  }, [keys])
+  }, [count])
 
   useEffect(() => {
     tagsUpdated(selectedTags)
