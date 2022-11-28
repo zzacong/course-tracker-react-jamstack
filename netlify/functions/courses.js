@@ -1,10 +1,10 @@
-const formattedReturn = require('../../server/formattedReturn')
-const getCourses = require('../../server/getCourses')
-const createCourse = require('../../server/createCourse')
-const deleteCourse = require('../../server/deleteCourse')
-const updateCourse = require('../../server/updateCourse')
+import formattedReturn from './utils/formattedReturn'
+import getCourses from './routes/getCourses'
+import createCourse from './routes/createCourse'
+import deleteCourse from './routes/deleteCourse'
+import updateCourse from './routes/updateCourse'
 
-exports.handler = async event => {
+export async function handler(event) {
   // * call appropriate helper function based on HTTP method
   switch (event.httpMethod) {
     case 'GET':

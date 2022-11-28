@@ -1,7 +1,7 @@
-const { table } = require('./airtable')
-const formattedReturn = require('./formattedReturn')
+import { table } from '../utils/airtable'
+import formattedReturn from '../utils/formattedReturn'
 
-module.exports = async event => {
+export default async function handler(event) {
   // * update course
   try {
     const { id, ...fields } = JSON.parse(event.body)
