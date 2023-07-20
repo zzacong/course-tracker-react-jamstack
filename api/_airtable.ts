@@ -8,6 +8,5 @@ const config = {
 }
 
 const base = new Airtable({ apiKey: config.apiKey }).base(config.baseId)
-export const table = base(config.table)
 
-export default table
+export const table = base(config.table)

@@ -1,16 +1,25 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import getCourses from '../../vercel-server/helpers/getCourses'
-import createCourse from '../../vercel-server/helpers/createCourse'
+import { table } from '../_airtable'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // * call appropriate helper function based on HTTP method
-  switch (req.method) {
-    case 'GET':
-      return getCourses(req, res)
-    case 'POST':
-      return createCourse(req, res)
-    default:
-      return res.status(405).json({ error: 'Method is not supported' })
+  try {
+    switch (req.method) {
+      case 'GET':
+        const courses = await table.select().firstPage()
+        const formattedCourses = courses.map(course => ({
+          id: course.id,
+          ...course.fields,
+        }))
+        res.status(200).json(formattedCourses)
+      case 'POST':
+        const createdCourse = await table.create([{ fields: req.body }])
+        res.status(201).json(createdCourse)
+      default:
+        return res.status(405).json({ error: 'Method is not supported' })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Something went wrong' })
   }
 }
