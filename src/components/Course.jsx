@@ -3,39 +3,58 @@ import axios from 'axios'
 
 import { queryKey } from '../App'
 
-const markCoursePurchased = async ({ courseId, purchased }) => {
-  // * mark course as purchased
-  try {
-    await axios.put(`/api/courses/${courseId}`, {
-      purchased,
-    })
-  } catch (error) {
-    console.error(error)
-  }
-}
+const markCoursePurchased = ({ id, purchased }) =>
+  axios.put(`/api/courses/${id}`, {
+    purchased,
+  })
 
-const deleteCourse = async courseId => {
-  // * delete course
-  try {
-    await axios.delete(`/api/courses/${courseId}`)
-  } catch (error) {
-    console.error(error)
-  }
-}
+const deleteCourse = courseId => axios.delete(`/api/courses/${courseId}`)
 
 export default function Course({ course }) {
   const queryClient = useQueryClient()
 
   const markCoursePurchasedMutation = useMutation({
     mutationFn: markCoursePurchased,
-    onSuccess: () => {
+    // When mutate is called:
+    onMutate: async updatedCourse => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: [queryKey] })
+      // Snapshot the previous value
+      const previousCourses = queryClient.getQueryData([queryKey])
+      // Optimistically update to the new value
+      queryClient.setQueryData([queryKey], old =>
+        old.map(o => {
+          if (o.id === updatedCourse.id) return updatedCourse
+          return o
+        })
+      )
+      // Return a context object with the snapshotted value
+      return { previousCourses }
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, _, context) => {
+      queryClient.setQueryData([queryKey], context.previousCourses)
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] })
     },
   })
 
   const deleteCourseMutation = useMutation({
     mutationFn: deleteCourse,
-    onSuccess: () => {
+    onMutate: async id => {
+      await queryClient.cancelQueries({ queryKey: [queryKey] })
+      const previousCourses = queryClient.getQueryData([queryKey])
+      queryClient.setQueryData([queryKey], old => old.filter(o => o.id !== id))
+      return { previousCourses }
+    },
+    onError: (err, _, context) => {
+      queryClient.setQueryData([queryKey], context.previousCourses)
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] })
     },
   })
@@ -63,7 +82,7 @@ export default function Course({ course }) {
           }
           onClick={() =>
             markCoursePurchasedMutation.mutate({
-              courseId: course.id,
+              ...course,
               purchased: true,
             })
           }
@@ -79,7 +98,7 @@ export default function Course({ course }) {
           }
           onClick={() =>
             markCoursePurchasedMutation.mutate({
-              courseId: course.id,
+              ...course,
               purchased: false,
             })
           }
