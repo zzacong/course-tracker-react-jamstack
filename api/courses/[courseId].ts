@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { table } from '../_airtable'
+import { table } from '../_airtable.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
